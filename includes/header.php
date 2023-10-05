@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <?php include('metas.php'); ?>
-    <?php include('style.php'); ?>
+    <?php include(BASE_PATH . '/includes/metas.php'); ?>
+    <?php include(BASE_PATH . '/includes/style.php'); ?>
 </head>
+
 <body>
     <header>
         <div class="container">
