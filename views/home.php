@@ -1,0 +1,9 @@
+<?php include('includes/banner.php'); ?>
+<?php include('includes/advantages.php'); ?>
+<?php include('includes/about.php'); ?>
+<?php include('includes/zipper.php'); ?>
+<?php include('includes/semi-golf.php'); ?>
+<?php include('includes/golf.php'); ?>
+<?php include('includes/video.php'); ?>
+<?php include('includes/form.php'); ?>
+<?php include('includes/modal.php'); ?>
