@@ -2,10 +2,15 @@
 
 namespace classes;
 
+use Jenssegers\Blade\Blade;
+
 class Controller
 {
 
-    public $template = BASE_PATH_VIEWS . '/template/main.php';
+    // private string $base_template_dir = BASE_PATH_VIEWS . '/template';
+    private string $base_template_dir = 'template';
+
+    public string $main_template = 'main';
 
     public function __construct()
     {
@@ -13,13 +18,20 @@ class Controller
 
     protected function render(string $template, array $data = null)
     {
-        if ($data !== null) {
-            extract($data); // Эта функция преобразует ключи массива в переменные
+        $controllerViewName = strtolower(basename(get_called_class()));
+        $viewDir = BASE_PATH_VIEWS;
+        $cacheDir = BASE_PATH . "/.cache";
+        if (!file_exists($cacheDir)) {
+            mkdir($cacheDir, 0755, true);
         }
-        ob_start();
-        include BASE_PATH_VIEWS . "/$template.php";
-        $content = ob_get_clean();
+        if (!file_exists($viewDir)) {
+            mkdir($viewDir, 0755, true);
+        }
 
-        include $this->template;
+        $bladeControllerTemplateView = new Blade($viewDir, $cacheDir);
+        echo $bladeControllerTemplateView->make(
+            $controllerViewName . '.' . $template,
+            $data
+        )->render();
     }
 }

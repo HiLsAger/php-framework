@@ -8,7 +8,7 @@ class Api extends Controller
 {
     public function index()
     {
-        $this->render('payment-order', [
+        $this->render('index', [
             'text' => 'Hello world'
         ]);
     }
