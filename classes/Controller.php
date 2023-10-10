@@ -16,21 +16,24 @@ class Controller
     {
     }
 
+    private function getControllerViewName()
+    {
+        return strtolower(basename(get_called_class()));
+    }
+
     protected function render(string $template, array $data = null)
     {
-        $controllerViewName = strtolower(basename(get_called_class()));
-        $viewDir = BASE_PATH_VIEWS;
         $cacheDir = BASE_PATH . "/.cache";
         if (!file_exists($cacheDir)) {
             mkdir($cacheDir, 0755, true);
         }
-        if (!file_exists($viewDir)) {
-            mkdir($viewDir, 0755, true);
+        if (!file_exists(BASE_PATH_VIEWS)) {
+            mkdir(BASE_PATH_VIEWS, 0755, true);
         }
 
-        $bladeControllerTemplateView = new Blade($viewDir, $cacheDir);
+        $bladeControllerTemplateView = new Blade(BASE_PATH_VIEWS, $cacheDir);
         echo $bladeControllerTemplateView->make(
-            $controllerViewName . '.' . $template,
+            $this->getControllerViewName() . '.' . $template,
             $data
         )->render();
     }
