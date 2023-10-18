@@ -6,7 +6,6 @@ use languages\exceptions\ExceptionLanguage;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Exception;
-use stdClass;
 
 class Application
 {
@@ -16,9 +15,9 @@ class Application
      * 
      * @property string $property
      * 
-     * @return stdClass
+     * @return array
      */
-    static public function getConfig(string $property = null)
+    static public function getConfig(string $property = null): array
     {
         $config = require BASE_PATH . '/config.php';
 
@@ -36,6 +35,8 @@ class Application
         $this->includeClasses();
         $this->includeControllers();
         $this->includeLocals();
+        $this->includeModels();
+        DBConnect::connect(self::getConfig('db'));
         $this->startController();
     }
 
@@ -52,7 +53,7 @@ class Application
                 $file->getExtension() === 'php' &&
                 basename($file) !== 'Application.php'
             ) {
-                include_once $file;
+                require_once $file;
             }
         }
     }
@@ -65,7 +66,24 @@ class Application
         $files = glob(BASE_PATH_CONTROLLERS . '/*.php');
 
         foreach ($files as $file) {
-            include_once $file;
+            require_once $file;
+        }
+    }
+
+    /**
+     * Подключение системных файлов
+     */
+    private function includeModels()
+    {
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(BASE_PATH_MODELS));
+
+        foreach ($iterator as $file) {
+            if (
+                $file->isFile() &&
+                $file->getExtension() === 'php'
+            ) {
+                require_once $file;
+            }
         }
     }
 
@@ -89,7 +107,7 @@ class Application
                         $file->isFile() &&
                         (preg_match($patternLocal, $file->getFilename()) || preg_match($patternLanguage, $file->getFilename()))
                     ) {
-                        include_once $file->getPathname();
+                        require_once $file->getPathname();
                     }
                 }
             }
@@ -119,17 +137,24 @@ class Application
                     $class = new $className;
 
                     $convert_function = ucwords(
-                        str_replace(
-                            ' ',
-                            '',
-                            str_replace('-', ' ', $pages[1])
-                        )
+                        str_replace(' ', '', str_replace('-', ' ', $pages[1]))
                     );
 
                     if (method_exists($class, $convert_function)) {
                         $class->{$convert_function}();
                         return true;
                     }
+                }
+            }
+        } elseif (count($pages) == 1 && !$pages[0]) {
+            $home = self::getConfig('home');
+
+            if (class_exists($home['controller'])) {
+                $class = new $home['controller'];
+
+                if (method_exists($class, $home['action'])) {
+                    $class->{$home['action']}();
+                    return true;
                 }
             }
         }

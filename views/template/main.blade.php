@@ -1,5 +1,3 @@
-<!-- Основной шаблон (например, в $this->base_template_dir/$this->main_template) -->
-
 <!DOCTYPE html>
 <html>
 

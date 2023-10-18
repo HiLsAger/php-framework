@@ -1,18 +1,21 @@
 <?php
 
-use classes\Application;
+namespace classes;
+
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class DBConnect
 {
-    public function connect(): Capsule
+    /**
+     * Подключение к базе данных
+     */
+    public static function connect(array $config): void
     {
         $capsule = new Capsule();
 
-        $db =
+        $capsule->addConnection($config);
 
-            $capsule->addConnection([]);
-
-        return $capsule;
+        $capsule->setAsGlobal();
+        $capsule->bootEloquent();
     }
 }
